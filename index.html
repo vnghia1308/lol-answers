@@ -662,6 +662,10 @@
             }
         ]
 
+        console.info("Loaded [QuestionsAnswersList] List")
+        console.info("Number of Questions: " + QuestionsAnswersList.length)
+        console.table(QuestionsAnswersList)
+
         function QuestionLookup(element) {
             const search = $(element).val().trim(), re = new RegExp(search, "i")
 
