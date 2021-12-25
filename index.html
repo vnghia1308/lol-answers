@@ -62,6 +62,7 @@
                             name="question">
                     </div>
                 </form>
+                <p>Hiện tại đang có <strong id="number-of-questions">-</strong> câu hỏi & đáp án trong dữ liệu</p>
 
                 <h3>Kết quả</h3>
                 <table class="table table-bordered table-striped">
@@ -681,6 +682,8 @@
         console.info("Loaded [QuestionsAnswersList] List")
         console.info("Number of Questions: " + QuestionsAnswersList.length)
         console.table(QuestionsAnswersList)
+
+        $("#number-of-questions").text(QuestionsAnswersList.length)
 
         function QuestionLookup(element) {
             const search = $(element).val().trim(), re = new RegExp(search, "i")
