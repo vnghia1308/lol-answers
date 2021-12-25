@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>LMHT - Thư viện đáp án trắc nghiệm</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" />
+    <link rel="stylesheet" href="./assets/css/mdtoast.min.css" />
+
+    <style type="text/css">
+        body {
+            background-image: url("./assets/img/bg.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        #json-input {
+            display: block;
+            width: 100%;
+            height: 200px;
+        }
+
+        /* width */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" style="padding-top: 30px; max-width: 100%; padding-left: 20px; padding-right: 20px">
+        <div class="card">
+            <div class="card-header">Tìm kiếm đáp án</div>
+            <div class="card-body">
+                <form>
+                    <div class="form-group">
+                        <label for="skin_id">Câu hỏi:</label>
+                        <input onkeyup="QuestionLookup(this)" type="text" class="form-control" id="question" placeholder="Câu hỏi trong sự kiện"
+                            name="question">
+                    </div>
+                </form>
+
+                <h3>Kết quả</h3>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th width="50%">Câu hỏi</th>
+                            <th width="50%">Câu trả lời</th>
+                        </tr>
+                    </thead>
+                    <tbody id="qa-body-list">
+                        <tr>
+                            <td colspan="2"><center>Vui lòng nhập câu hỏi cần tìm kiếm</center></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                <i class="fa fa-code"></i> with <i class="fa fa-heart"></i> by <a href="https://www.facebook.com/nghiadev">Vy Nghia</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Local Lib -->
+    <script src="./assets/js/bootstrap.min.js"></script>
+    <script src="./assets/js/mdtoast.min.js"></script>
+    <script src="./assets/js/jquery.json-editor.min.js"></script>
+    <script>
+        var QuestionsAnswersList = [
+            {
+                "question": "Chiêu cuối của Kled có tên là gì? ",
+                "answer": "XUNG PHONGGGG!!!"
+            },
+            {
+                "question": "Bạn có thể tương tác gì với Poro trong Vực Gió Hú? ",
+                "answer": "Cho ăn bánh"
+            },
+            {
+                "question": "Biệt hiệu của Miss Fortune là gì? ",
+                "answer": "Thợ săn tiền thưởng"
+            },
+            {
+                "question": "Ai đã xây dựng Pháo Đài Bất diệt?",
+                "answer": "Mordekaiser "
+            },
+            {
+                "question": "LMHT có bao nhiêu cặp anh em?",
+                "answer": "2"
+            },
+            {
+                "question": "Điều nào đúng khi miêu tả về con người của Zigss?",
+                "answer": "Điên khùng nhưng đầy tài năng"
+            },
+            {
+                "question": "Yasuo thổi sáo thì Yone nên làm gì?",
+                "answer": "Kéo đàn"
+            },
+            {
+                "question": "One, Two, Three là câu nói quen thuộc của vị tướng Liên Minh nào?",
+                "answer": "Teemo"
+            },
+            {
+                "question": "Gia đình của Miss Fortune từng làm nghề gì?",
+                "answer": "Thợ rèn"
+            },
+            {
+                "question": "Crush của Rumble là ai?",
+                "answer": "Tristana"
+            },
+            {
+                "question": "Mắt của Lux màu gì?",
+                "answer": "Xanh nước biển"
+            },
+            {
+                "question": "Kí tự S và L khắc trên súng của Lucian nghĩa là gì?",
+                "answer": "Light & Shadow"
+            },
+            {
+                "question": "Trong cốt truyện, đội Vệ Binh Ánh Sáng phải chống lại thế lực nào?",
+                "answer": "Hắc diệt đế vương Viego"
+            },
+            {
+                "question": "Vị tướng nào sau đây đã từng bị làm lại tới 4 lần?",
+                "answer": "Ryze"
+            },
+            {
+                "question": "Có mấy tướng có tên bắt đầu bằng chữ cái Q?",
+                "answer": "1"
+            },
+            {
+                "question": "Trang bị nào dưới đây là trang bị Thần thoại?",
+                "answer": "Vương Miệng Suy Vong"
+            },
+            {
+                "question": "Mắt Kiểm Soát tồn tại trên 5 phút sẽ được đổi tên thành gì?",
+                "answer": "Hội mắt sống lâu sống khỏe"
+            },
+            {
+                "question": "Trang phục Bard Ngày Tuyết Rơi ra mắt năm nào?",
+                "answer": "2015"
+            },
+            {
+                "question": "Trang phục Katarina Cô Nàng Tuần Lộc ra mắt năm nào?",
+                "answer": "2012"
+            },
+            {
+                "question": "Mừng sinh nhật 9 tuổi năm nay, Liên Minh Huyền Thoại đã tặng trang phục gì cho toàn server?",
+                "answer": "Renger Vệ Binh Ánh Sáng"
+            },
+            {
+                "question": "Hiện tại còn ai chưa lộ mặt trong LMHT?",
+                "answer": "Malzahar"
+            },
+            {
+                "question": "Thú cưỡi của Sejuani mùa Giáng Sinh là gì?",
+                "answer": "Poro"
+            },
+            {
+                "question": "Garen là chỉ huy của lực lượng nào?",
+                "answer": "Đội tiên phong chủ lực"
+            },
+            {
+                "question": "Điều đặc biệt trong kĩ năng của Janna khiến cô khác biệt so với các vị tướng khác là gì?",
+                "answer": "Cô có thể tạo giúp cho trụ đồng minh"
+            },
+            {
+                "question": "Điều Viego luôn muốn làm nhất là gì?",
+                "answer": "Hồi sinh vợ"
+            },
+            {
+                "question": "Chiêu Q của nidalee (dạng người) sẽ gây thêm sát thương theo chỉ số nào?",
+                "answer": "Khoảng cách"
+            },
+            {
+                "question": "Tôn chỉ của Demacia là gì?",
+                "answer": "Không khoang nhượng"
+            },
+            {
+                "question": "Trang phục nào của Miss Fortune cùng nhóm với Ahri, Sona, Riven và Ezreal?",
+                "answer": "Miss Fortune giả lập"
+            },
+            {
+                "question": "Yasuo ra mắt vào năm nào?",
+                "answer": "2013"
+            },
+            {
+                "question": "Lý do tham gia hội Vệ Binh Ánh Sáng của Graves là gì?",
+                "answer": "Bị Viego đá chén cơm"
+            },
+            {
+                "question": "Liên Minh Huyền Thoại hiện có bao nhiêu vị tướng?",
+                "answer": "157"
+            },
+            {
+                "question": "Đâu là cây thông của LMHT?",
+                "answer": "Maokai"
+            },
+            {
+                "question": "Trang phục Giáng Sinh của Jinx có tên là gì?",
+                "answer": "Jinx Yêu Tinh Giáng Sinh"
+            },
+            {
+                "question": "Nội năng cơ bản của Shen là bao nhiêu?",
+                "answer": "400"
+            },
+            {
+                "question": "Nội tại của chiêu thức Bộ Pháp Hắc Ám của Aatrox là gì?",
+                "answer": "Hồi máu"
+            },
+            {
+                "question": "Tên thật của Miss Fortune là gì ?",
+                "answer": "Sarah"
+            },
+            {
+                "question": "Trang phục Teemo Yêu Tinh Giáng Sinh ra mắt năm nào?",
+                "answer": "2009"
+            },
+            {
+                "question": "Trang phục Singed Ngày Tuyết Rơi ra mắt năm nào?",
+                "answer": "2013"
+            },
+            {
+                "question": "Chiêu W - Điện An Lạc của Bard trong trang phục Bard Ngày Tuyết rơi là gì?",
+                "answer": "Cốc Cacao nóng"
+            },
+            {
+                "question": "Tà Ảnh Song Kiếm là dòng trang phục Hoa Linh của vị tướng nào?",
+                "answer": "Yone"
+            },
+            {
+                "question": "Vũ khí chính của Vi là gì?",
+                "answer": "Đôi găng tay Hexatech"
+            },
+            {
+                "question": "Nội tại Hưng Phấn của Jinx tồn tại bao lâu?",
+                "answer": "6S"
+            },
+            {
+                "question": "Trong quá khứ, Zed và Shen là?",
+                "answer": "Huynh Đệ Đồng Môn"
+            },
+            {
+                "question": "Trang phục Malzahar Ngày Tuyết Rơi ra mắt năm nào?",
+                "answer": "2014"
+            },
+            {
+                "question": "Trang bị nào sau đây có thể ngắt sát thương R - Dấu Ấn Tử Thần của Zed?",
+                "answer": "Đồng hồ cát"
+            },
+            {
+                "question": "Chọn một tướng để tạo wombo combo cùng Yasuo",
+                "answer": "Tất cả"
+            },
+            {
+                "question": "Vũ khí của Miss Fortune Kẹo Ngọt là gì?",
+                "answer": "Kẹo"
+            },
+            {
+                "question": "Trang phục LeBlanc Tầm Gửi ra mắt năm nào?",
+                "answer": "2011"
+            },
+            {
+                "question": "Là một main Yasuo, lốc trúng thì phải...?",
+                "answer": "Ấn R liên tục"
+            },
+            {
+                "question": "Có thể lên tối đa bao nhiêu trang bị Thần Thoại?",
+                "answer": "Chỉ 1"
+            },
+            {
+                "question": "Bộ quần áo của Karma Mùa Đông Kỳ Diệu màu gì?",
+                "answer": "Tím"
+            },
+            {
+                "question": "Mối tình đầu của Gangplank là ai?",
+                "answer": "Illaoi"
+            },
+            {
+                "question": "Tên thật của Vayne là gì?",
+                "answer": "Shauna Vayne"
+            },
+            {
+                "question": "Thủ đô của Vương quốc Demacia là gì?",
+                "answer": "Thành phố Demacia"
+            },
+            {
+                "question": "Thời gian làm chậm tối đa chiêu Giật Bắn của Jinx là bao nhiêu?",
+                "answer": "2"
+            },
+            {
+                "question": "Có bao nhiêu vị tướng được ra mắt vào 2021?",
+                "answer": "4"
+            },
+            {
+                "question": "Họ của anh em nhà Garen và Lux là gì?",
+                "answer": "Crownguard"
+            },
+            {
+                "question": "Trong bộ trang phục Giáng Sinh, Mundo được gọi là gì?",
+                "answer": "Hoàng tử"
+            },
+            {
+                "question": "Trong trang phục Anh Hùng Lãng Kiếm, Yasuo đã đeo vật gì trên cổ?",
+                "answer": "Dây chuyền"
+            },
+            {
+                "question": "Trang phục hàng hiệu duy nhất Yasuo sở hữu là?",
+                "answer": "True Damage Yasuo"
+            },
+            {
+                "question": "Ai là phản diện chính trong vũ trụ trang phục Hoa Linh Lục Địa?",
+                "answer": "Không có ai là phản diện"
+            },
+            {
+                "question": "Tên kĩ năng nội tại của Lee Sin là gì?",
+                "answer": "Loạn Đả"
+            },
+            {
+                "question": "Vị tướng nào đã từng làm shipper đồ ăn?",
+                "answer": "Sivir"
+            },
+            {
+                "question": "Elise có tối đa bao nhiêu nhện con?",
+                "answer": "3"
+            },
+            {
+                "question": "Trang phục Braum Ông Già Tuyết ra mắt năm nào?",
+                "answer": "2016"
+            },
+            {
+                "question": "Đâu là dòng trang phục vượt mốc 10 thành viên nhanh nhất LMHT?",
+                "answer": "Hoa Linh Lục Địa"
+            },
+            {
+                "question": "Trạng thái Vong Hồn của Karthus kéo dài bao lâu?",
+                "answer": "7"
+            },
+            {
+                "question": "Kai'sa cần bao nhiêu Cuốc Chim để tiến hoá được kĩ năng Q?",
+                "answer": "4"
+            },
+            {
+                "question": "Tường gió Yasuo không chặn được?",
+                "answer": "Trụ bắn"
+            },
+            {
+                "question": "Điểm kì lạ ở Mundo là hắn có làn da màu gì?",
+                "answer": "Tím"
+            },
+            {
+                "question": "Kĩ năng E của Sona có tên là gì?",
+                "answer": "Bản Nhạc Tốc Độ"
+            },
+            {
+                "question": "Vị tướng nào luôn xuất hiện cùng cây kéo khổng lồ?",
+                "answer": "Gwen"
+            },
+            {
+                "question": "Ziggs mong muốn và khát khao trở thành một nhà nghiên cứu vĩ đại như ai?",
+                "answer": "Heimerdinger"
+            },
+            {
+                "question": "Tấm khiên của Braum trong trang phục Braum Ông Già Tuyết là gì?",
+                "answer": "Lò sưởi"
+            },
+            {
+                "question": "Lý do Riven gia nhập đội Vệ Binh Ánh Sáng là gì?",
+                "answer": "Chuộc lại lỗi lần trong cuộc xâm lăng Ionia"
+            },
+            {
+                "question": "Chiêu cuối của Lux có tên là gì?",
+                "answer": "Cầu Vòng Tối Thượng"
+            },
+            {
+                "question": "Chiếc trực thăng của Corki được tạo ra bởi ai?",
+                "answer": "Heimerdinger"
+            },
+            {
+                "question": "Tên hiệu của Ornn là gì?",
+                "answer": "Ngọn lửa khởi nguyên"
+            },
+            {
+                "question": "Súng của Graves Ngày Tuyết Rơi bắn ra gì?",
+                "answer": "Tuyết"
+            },
+            {
+                "question": "Từ nào sau đây miêu tả về tính cách của Jinx?",
+                "answer": "Điên cuồng và vui vẻ"
+            },
+            {
+                "question": "Blitzcrank được tạo ra bởi ai?",
+                "answer": "Viktor"
+            },
+            {
+                "question": "Đội Vệ Binh Sánh Sáng có bao nhiêu thành viên?",
+                "answer": "12"
+            },
+            {
+                "question": "Tướng Quốc Dân, Đấng là tên hay gọi của vị tướng nào?",
+                "answer": "Yasuo"
+            },
+            {
+                "question": "Món ăn yêu thích của Caitlyn?",
+                "answer": "Cupcake"
+            },
+            {
+                "question": "Vì sao Olaf tham gia hội Vệ Binh Ánh Sáng?",
+                "answer": "Tìm kiếm cái chết vinh quang"
+            },
+            {
+                "question": "Thresh hạ gục vị tướng nào sẽ rơi ra 2 linh hồn?",
+                "answer": "Nunu & Willump"
+            },
+            {
+                "question": "Trang phục nào của Vayne có chủ đạo màu xanh lá?",
+                "answer": "Vayne Đoạt Hồn"
+            },
+            {
+                "question": "Đâu là bộ trang phục đầu tiên mà Ahri được thực sự hóa thân thành hồ ly?",
+                "answer": "Ahri Chiêu Hồn Thiên Hồ"
+            },
+            {
+                "question": "Cái đuôi trên đầu của Zac giống với nhân vật nào?",
+                "answer": "Ma Bu"
+            },
+            {
+                "question": "Bẫy Yordle của Caitlyn sẽ cho tối đa bao nhiêu bẫy?",
+                "answer": "5"
+            },
+            {
+                "question": "Vũ khí của Yi Người Tuyết là gì?",
+                "answer": "Cà rốt"
+            },
+            {
+                "question": "Akali tiêu tốn bao nhiêu nội năng khi dùng Phi Đao Năm Cánh ở cấp độ 1?",
+                "answer": "130"
+            },
+            {
+                "question": "Thresh đã từng dùng vật gì để nhốt Senna?",
+                "answer": "Lồng Đèn"
+            },
+            {
+                "question": "Tuổi thực của Zoe là bao nhiêu?",
+                "answer": "Hơn 1000 tuổi"
+            },
+            {
+                "question": "Vũ khí của Twitch là?",
+                "answer": "Một chiếc nỏ"
+            },
+            {
+                "question": "Vị tướng nào dưới đây đội mũ Noel màu đỏ?",
+                "answer": "Draven Ông Già Tuyết"
+            },
+            {
+                "question": "Phi Hồ là chiêu thức của vị tướng nào?",
+                "answer": "Ahri"
+            },
+            {
+                "question": "Trong trang phục Bard Ngày Tuyết Rơi, ông đi cùng con vật nào?",
+                "answer": "Chim cánh cụt"
+            },
+            {
+                "question": "Biện pháp chống lại ma thuật của người Demacia là gì?",
+                "answer": "Sử dụng kháng ma thạch"
+            },
+            {
+                "question": "Trong trang phục Poppy Cô Bé Tuần Lộc, cây búa được thay thế bằng gì?",
+                "answer": "Cái chuông"
+            },
+            {
+                "question": "Yone ra mắt trong sự kiện gì?",
+                "answer": "Hoa Linh Lục Địa"
+            },
+            {
+                "question": "Corki tích luỹ tối được bao nhiêu quả tên lửa?",
+                "answer": "9"
+            },
+            {
+                "question": "Ai là người đã thiết kế ra kiểu tóc mới và trang phục Vệ Binh Ánh Sáng cho Vayne?",
+                "answer": "Gwen"
+            },
+            {
+                "question": "Cassiopeia Mị Hoặc Xà Yêu sẽ tạo ra hiệu ứng nở hoa khi kích hoạt kỹ năng nào?",
+                "answer": "Q - Vụ nổ độc hại"
+            },
+            {
+                "question": "Trang bị Ngọn Lửa Hắc Hóa giúp bạn có khả năng gì?",
+                "answer": "Xuyên kháng phép"
+            },
+            {
+                "question": "Ekko có thể hồi máu thông qua chiêu thức nào?",
+                "answer": "Đột phá thời gian"
+            },
+            {
+                "question": "Trang phục Yone Tà Ảnh Song Kiếm là trang phục bậc gì?",
+                "answer": "Huyền Thoại"
+            },
+            {
+                "question": "Trong dàn skin Giáng Sinh, tướng nào có 2 trang phục?",
+                "answer": "Poppy"
+            },
+            {
+                "question": "Ai là người đã tìm thấy và đối đầu trực diện với Jinx?",
+                "answer": "Vi"
+            },
+            {
+                "question": "Lý do Draven gia nhập hội Đại Suy Vong?",
+                "answer": "Đánh nhau thua"
+            },
+            {
+                "question": "Vayne nói câu gì khi được chọn?",
+                "answer": "Let us hunt those who have fallen to darkness"
+            },
+            {
+                "question": "Điều nào sai về Leblanc?",
+                "answer": "Thuộc hội hoa hồng đỏ"
+            },
+            {
+                "question": "Chồng của Senna là ai?",
+                "answer": "Lucian"
+            },
+            {
+                "question": "Trên đường \"xử lý\" Twitch Vua Xứ Tuyết, Neeko đã gặp ai bị đóng băng?",
+                "answer": "Mundo"
+            },
+            {
+                "question": "Khi mua Giáp Vai Nguyệt Thần sẽ nhận thêm Máu, Giáp, Kháng phép và?",
+                "answer": "Điểm hồi kỹ năng"
+            },
+            {
+                "question": "Trang phục Jinx Yêu Tinh Giáng Sinh, Jinx sẽ cưỡi trên cái gì khi biến về?",
+                "answer": "___"
+            },
+            {
+                "question": "Yone và Yasuo đóng vai gì trong \"Liên Minh chuyện giờ mới dám kể\"?",
+                "answer": "Quân tiếp viện"
+            },
+            {
+                "question": "Chiêu cuối của Vel'koz có tên là gì?",
+                "answer": "Tia Phân Hủy Sự Sống"
+            },
+            {
+                "question": "Trang phục Jayce Kẻ Phản Diện được lấy ý tưởng từ series phim nào?",
+                "answer": "Star wars"
+            },
+            {
+                "question": "Trang phục Jinx Yêu Tinh Giáng Sinh ra mắt vào năm nào?",
+                "answer": "2017"
+            },
+            {
+                "question": "Tầm kích hoạt xa nhất Đại bác đẩy lùi của Tristiana là bao nhiêu?",
+                "answer": "661"
+            },
+            {
+                "question": "Lá chắn từ nội tại của Blitzcrack tồn tại trong bao lâu?",
+                "answer": "10"
+            },
+            {
+                "question": "Nội Tại Dấu Ấn Sát Thủ KHÔNG không giúp Akali tăng? ",
+                "answer": "Hồi máu"
+            },
+            {
+                "question": "Nami Tiểu Long Ngư được thiết kế dựa trên loài cá nào ?",
+                "answer": "Cá chép thổ cẩm"
+            },
+            {
+                "question": "Kĩ năng Q trước khi chỉnh sửa của Graves tên là gì?",
+                "answer": "Đạn chém"
+            },
+            {
+                "question": "Nội tại của Twisted Fate có tác dụng gì?",
+                "answer": "Tăng vàng khi hạ gục mục tiêu"
+            },
+            {
+                "question": "Bài Xanh của Twisted Fate có biểu tượng gì trên đó?",
+                "answer": "Con mắt"
+            },
+            {
+                "question": "Pix của trang phục Lulu Mùa Đông Kì Diệu là gì?",
+                "answer": "Poro"
+            },
+            {
+                "question": "Boomerang của Sivir Bão Tuyết có màu gì?",
+                "answer": "Xanh dương"
+            },
+            {
+                "question": "Đàn của Sona lấy cảm hứng từ nhạc cụ gì?",
+                "answer": "Đàn tranh"
+            },
+            {
+                "question": "Ekko hiện đang khoảng bao nhiêu tuổi? (Trong cốt truyện)",
+                "answer": "16-17"
+            },
+            {
+                "question": "Trang phục Amumu Quà Trả Lại ra mắt năm nào?",
+                "answer": "2010"
+            },
+            {
+                "question": "Anh Hùng Lãng Kiếm là dòng trang phục Hoa Linh của vị tướng nào?",
+                "answer": "Yasuo"
+            },
+            {
+                "question": "Tóc Jinx tạo thành hình gì khi cô bị hạ gục?",
+                "answer": "Hình trái tim"
+            },
+            {
+                "question": "Nội tại của trang bị mới Vương Miện Suy Vong gọi là gì?",
+                "answer": "Khiên hộ thể"
+            },
+            {
+                "question": "Thresh Ẩn Diện Quỷ Thần sẽ cởi bỏ lớp mặt nạ khi dùng chiêu cuối và thu nhập đủ bao nhiêu linh hồn?",
+                "answer": "45 Linh Hồn"
+            },
+            {
+                "question": "Kĩ năng nào của Gangplank không tốn năng lượng ?",
+                "answer": "E"
+            },
+            {
+                "question": "Sona được lấy cảm hứng từ nhân vật nào?",
+                "answer": "Hastsume Miku"
+            },
+            {
+                "question": "Bard Ngày Tuyết Rơi sẽ để lại gì cho bạn hồi máu?",
+                "answer": "Cacao Nóng"
+            },
+            {
+                "question": "Zed sẽ làm gì khi oẳn tù tì thua cái bóng của mình?",
+                "answer": "Giết chết cái bóng"
+            },
+            {
+                "question": "Vì sau Búa Thủy Ngân của Jayce lại không thể hoạt động trong suốt một thời gian dài?",
+                "answer": "Thiếu nguồn năng lượng đủ mạnh"
+            },
+            {
+                "question": "Đâu là dòng trang phục đâu tiên được lấy bối cảnh ở vũ trụ chính của Runeterra?",
+                "answer": "Vệ binh ánh sáng"
+            },
+            {
+                "question": "Chiêu thức nào của Ahri giúp tăng tốc độ di chuyển?",
+                "answer": "W - Lửa hổ ly"
+            }
+        ]
+
+        function QuestionLookup(element) {
+            const search = $(element).val().trim(), re = new RegExp(search, "i")
+
+            if($(element).val().trim() == "")
+                return  $("#qa-body-list").html(
+                    `<tr>
+                        <td colspan="2"><center>Vui lòng nhập câu hỏi cần tìm kiếm</center></td>
+                    <tr>`
+                )
+
+            var find_result = []
+            for(let q of QuestionsAnswersList) {
+                if(q.question.match(re)) {
+                    find_result.push(q)
+                }
+            }
+
+            if(find_result.length == 0)
+                return  $("#qa-body-list").html(
+                    `<tr>
+                        <td colspan="2"><center>Không tìm thấy câu hỏi</center></td>
+                    <tr>`
+                )
+            
+            var reuslt_child = ""
+
+            for(const r of find_result) {
+                reuslt_child += 
+                `<tr>
+                    <td>${r.question}</td>
+                    <td>${r.answer}</td>
+                <tr>`
+            }
+
+            $("#qa-body-list").html(reuslt_child)
+        }
+    </script>
+</body>
+
+</html>
