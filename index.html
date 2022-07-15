@@ -861,13 +861,17 @@
             }
           ]
         
+        var result_ans = ""
+           
         for(const r of QuestionsAnswersList) {
-            result_child += 
+            result_ans += 
             `<tr>
                 <td>${r.question}</td>
                 <td>${r.answer}</td>
             <tr>`
         }
+        
+        $("#qa-body-list").html(result_ans)
 
         
         console.info("Loaded [QuestionsAnswersList] List")
