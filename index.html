@@ -99,7 +99,7 @@
     <script src="./assets/js/mdtoast.min.js"></script>
     <script src="./assets/js/jquery.json-editor.min.js"></script>
     <script>
-        var QuestionsAnswersList = [
+        var QuestionsAnswersListOld = [
             {
                 "question": "Chiêu cuối của Kled có tên là gì? ",
                 "answer": "XUNG PHONGGGG!!!"
@@ -829,6 +829,46 @@
                 "answer": "15"
             }
           ]
+        
+        var QuestionsAnswersList = [
+            {
+                "question": "Zed và Shen có quan hệ với nhau như thế nào trong quá khứ?",
+                "answer": "Đồng môn"
+            },
+            {
+                "question": "Vị tướng nào đã được làm lại 4 lần kể từ khi ra mắt",
+                "answer": "Ryze"
+            },
+            {
+                "question": "Vị tướng nào rơi ra 2 linh hồn khi bị Thresh hạ gục?",
+                "answer": "Nunu & Willump"
+            },
+            {
+                "question": "Chữ L & S trên súng của Lucian là viết tắt của...",
+                "answer": "Light & Shadow"
+            },
+            {
+                "question": "Vị tướng nào có một câu thoại là \"One, Two, Three\"?",
+                "answer": "Teemo"
+            },
+            {
+                "question": "Vị tướng nào chưa từng lộ mặt (kể cả trong trang phục)?",
+                "answer": "Jhin"
+            },
+            {
+                "question": "Vệ Binh nào không tham gia tiệc ngủ?",
+                "answer": "Ahri Vệ Binh Tinh Tú"
+            }
+          ]
+        
+        for(const r of QuestionsAnswersList) {
+            result_child += 
+            `<tr>
+                <td>${r.question}</td>
+                <td>${r.answer}</td>
+            <tr>`
+        }
+
         
         console.info("Loaded [QuestionsAnswersList] List")
         console.info("Number of Questions: " + QuestionsAnswersList.length)
